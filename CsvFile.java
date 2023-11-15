@@ -12,7 +12,8 @@ class Functions extends CsvFile{
   String Entry;
   String csvFilePath = "data.csv";
   String delimiter = ",";
-  
+  float sum = 0;
+
   String dataInput() throws IOException {
     BufferedWriter bwriter = new BufferedWriter(new FileWriter(csvFilePath, true));
     InputStreamReader ireader = new InputStreamReader(System.in);
@@ -46,24 +47,156 @@ class Functions extends CsvFile{
         i++;
         Index = String.valueOf(i);
     }
-    
     Entry = Index + "," + Dates + "," + Category + "," + Amount + "," + Description + "\n";
     return Entry;
   }
   
   void displayAll(){
     try{
-      Scanner sc = new Scanner(new FileReader(csvFilePath));
-      sc.useDelimiter(" , ");
-      // BufferedReader breader = new BufferedReader(new FileReader(csvFilePath));
-      while (sc.hasNext()) {
-        System.out.print(sc.next());
+      sum = 0;
+      BufferedReader br = new BufferedReader(new FileReader(csvFilePath));
+      String lastLine = null;
+      String line = br.readLine();
+      lastLine = line;
+      line = br.readLine();
+      System.out.println("\nIndex,Date,Category,Amount,Description");
+      while (line != null) {
+          lastLine = line;
+          line = br.readLine();
+          String[] values = lastLine.split(",");
+          float f = Float.parseFloat(values[3]);
+          sum = sum + f;
+          System.out.println(lastLine);  
       }
-      sc.close();
+      System.out.println("\nTotal amount spent = " + sum);
+      if (lastLine == null) {
+        throw new IOException("File is empty.");
+      }
     } catch (IOException e){
       e.printStackTrace();
     }
   }
+
+  void displaySelect(String val, int in){
+    try{
+      sum = 0;
+      BufferedReader br = new BufferedReader(new FileReader(csvFilePath));
+      String lastLine = null;
+      String line = br.readLine();
+      while (line != null) {
+          lastLine = line;
+          line = br.readLine();
+          String[] values = lastLine.split(",");
+          if (val.equals(values[in])){
+            float f = Float.parseFloat(values[3]);
+            sum = sum + f;
+            System.out.println(lastLine);  
+          }
+      }
+      if (lastLine == null) {
+        throw new IOException("File is empty.");
+      }
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+  }
+
+  void displayCategory(String cat) {
+    System.out.println("\nIndex,Date,Category,Amount,Description");
+    displaySelect(cat, 2);
+    System.out.println("\nTotal amount of money spent in this category = " + sum);
+  }
+
+  void displayIndex(String i) {
+    System.out.println("\nIndex,Date,Category,Amount,Description");
+    displaySelect(i, 0); 
+  }
+
+  void displayLesserAmount(float am){
+    try{
+      sum = 0;
+      BufferedReader br = new BufferedReader(new FileReader(csvFilePath));
+      String lastLine = null;
+      String line = br.readLine();
+      lastLine = line;
+      line = br.readLine();
+      System.out.println("\nIndex,Date,Category,Amount,Description");
+      while (line != null) {
+          lastLine = line;
+          line = br.readLine();
+          String[] values = lastLine.split(",");
+          float f = Float.parseFloat(values[3]);
+          if (f<=am){
+            sum = sum + f;
+            System.out.println(lastLine);  
+          }
+      }
+      System.out.println("\nTotal amount of money spent here = " + sum);
+      if (lastLine == null) {
+        throw new IOException("File is empty.");
+      }
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+  }
+
+  void displayGreaterAmount(float am){
+    try{
+      sum = 0;
+      BufferedReader br = new BufferedReader(new FileReader(csvFilePath));
+      String lastLine = null;
+      String line = br.readLine();
+      lastLine = line;
+      line = br.readLine();
+      System.out.println("\nIndex,Date,Category,Amount,Description");
+      while (line != null) {
+          lastLine = line;
+          line = br.readLine();
+          String[] values = lastLine.split(",");
+          float f = Float.parseFloat(values[3]);
+          if (f>=am){
+            sum = sum + f;
+            System.out.println(lastLine);  
+          }
+      }
+      System.out.println("\nTotal amount of money spent here = " + sum);
+      if (lastLine == null) {
+        throw new IOException("File is empty.");
+      }
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+  }
+
+  void displayInYear(int year){
+    try{
+      sum = 0;
+      BufferedReader br = new BufferedReader(new FileReader(csvFilePath));
+      String lastLine = null;
+      String line = br.readLine();
+      lastLine = line;
+      line = br.readLine();
+      System.out.println("\nIndex,Date,Category,Amount,Description");
+      while (line != null) {
+          lastLine = line;
+          line = br.readLine();
+          String[] values = lastLine.split(",");
+          String[] x = (values[1]).split("/");
+          int y = Integer.parseInt(x[2]);
+          if (year==y){
+            float f = Float.parseFloat(values[3]);
+            sum = sum + f;
+            System.out.println(lastLine);  
+          }
+      }
+      System.out.println("\nTotal amount of money spent in this year = " + sum);
+      if (lastLine == null) {
+        throw new IOException("File is empty.");
+      }
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+  }  
 }
 
 
@@ -76,7 +209,6 @@ public class CsvFile{
             InputStreamReader ireader = new InputStreamReader(System.in);
             BufferedReader breader=new BufferedReader(ireader);
             Functions func = new Functions();
-
             // bwriter.write("Index,Date,Category,Amount,Description\n");
             // bwriter.write("1,10/8/2023,Food&Drinks,20.0,Canteen Samosa\n");
             // bwriter.write("2,11/8/2023,Food&Drinks,12.0,Canteen Tea\n");
@@ -89,22 +221,58 @@ public class CsvFile{
               System.out.println("1) Enter expense"); 
               System.out.println("2) Display all expenses");
               System.out.println("3) Display expenses based on category");
-              System.out.println("4) Display expenses based on year");
-              System.out.println("5) Display all based on year and month");
+              System.out.println("4) Display expenses based on index");
+              System.out.println("5) Display expense with amount less than equal to");
+              System.out.println("6) Display expense with amount greater than equal to");
+              System.out.println("7) Display expenses in given year");
               System.out.println(") Exit\n");
               System.out.print("Enter your choice : ");
               String x = breader.readLine();
               int choice = Integer.parseInt(x);
-              if(choice==6) break;
+              if(choice==9) {
+                break;
+              }
+              else if (choice == 1){
+                bwriter.write(func.dataInput());
+                break;
+              } 
               switch (choice){
                 
-                case 1:
-                  bwriter.write(func.dataInput());
-                  break;
-              
                 case 2:
                   func.displayAll();
                   break;
+
+                case 3:
+                  System.out.print("Enter category name : ");
+                  String cat = breader.readLine();
+                  func.displayCategory(cat);
+                  break;
+
+                case 4:
+                  System.out.print("Enter index number : ");
+                  String i = breader.readLine();
+                  func.displayIndex(i);
+                  break;
+
+                case 5:
+                  System.out.print("Enter amount : ");
+                  String a = breader.readLine();
+                  float am = Float.parseFloat(a);
+                  func.displayLesserAmount(am);  
+                  break;
+
+                case 6:
+                  System.out.print("Enter amount : ");
+                  a = breader.readLine();
+                  am = Float.parseFloat(a);
+                  func.displayGreaterAmount(am);  
+                  break;
+
+                case 7:
+                  System.out.print("Enter year : ");
+                  a = breader.readLine();
+                  int year = Integer.parseInt(a);
+                  func.displayInYear(year);
               } 
             }
             bwriter.close();
