@@ -196,7 +196,37 @@ class Functions extends CsvFile{
     } catch (IOException e){
       e.printStackTrace();
     }
-  }  
+  }
+  void displayInMonth(int year, int month){
+    try{
+      sum = 0;
+      BufferedReader br = new BufferedReader(new FileReader(csvFilePath));
+      String lastLine = null;
+      String line = br.readLine();
+      lastLine = line;
+      line = br.readLine();
+      System.out.println("\nIndex,Date,Category,Amount,Description");
+      while (line != null) {
+          lastLine = line;
+          line = br.readLine();
+          String[] values = lastLine.split(",");
+          String[] x = (values[1]).split("/");
+          int y = Integer.parseInt(x[2]);
+          int m = Integer.parseInt(x[1]);
+          if (year==y && month ==m){
+            float f = Float.parseFloat(values[3]);
+            sum = sum + f;
+            System.out.println(lastLine);  
+          }
+      }
+      System.out.println("\nTotal amount of money spent in this year = " + sum);
+      if (lastLine == null) {
+        throw new IOException("File is empty.");
+      }
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+  }
 }
 
 
@@ -225,7 +255,8 @@ public class CsvFile{
               System.out.println("5) Display expense with amount less than equal to");
               System.out.println("6) Display expense with amount greater than equal to");
               System.out.println("7) Display expenses in given year");
-              System.out.println(") Exit\n");
+              System.out.println("8) Display expenses in given month of given year");
+              System.out.println("9) Exit\n");
               System.out.print("Enter your choice : ");
               String x = breader.readLine();
               int choice = Integer.parseInt(x);
@@ -273,6 +304,15 @@ public class CsvFile{
                   a = breader.readLine();
                   int year = Integer.parseInt(a);
                   func.displayInYear(year);
+
+                case 8:
+                  System.out.print("Enter year : ");
+                  a = breader.readLine();
+                  year = Integer.parseInt(a);
+                  System.out.print("Enter month : ");
+                  a = breader.readLine();
+                  int month = Integer.parseInt(a);
+                  func.displayInMonth(year, month);
               } 
             }
             bwriter.close();
